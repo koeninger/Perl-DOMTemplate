@@ -1,0 +1,36 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use DOMTemplate qw( rules tmpl tree);
+use DOMTemplate::Modifier qw( key );
+use HTML::Template;
+use Benchmark;
+
+our $DEBUG = 1;
+
+no strict 'subs';
+our $t = tree('benchmark.html');
+
+# benchmark
+
+our $dtmpl = tmpl( $t,
+                  'html body div#content p#monkey-name.big em' => key 'rand'
+                  );
+
+print $dtmpl->({ 'rand' => rand 64});
+
+our $htmpl = HTML::Template->new( 'filename' => 'benchmark.html' );
+
+$htmpl->param( 'rand' => rand 64 );
+
+print $htmpl->output();
+
+timethese( 100000,
+           {
+            'single rule DOMtemplate' =>
+            sub{$dtmpl->({ 'rand' => rand 64});},
+            'single rule in memory HTMLtemplate' =>
+            sub{$htmpl->param( 'rand' => rand 64 ); $htmpl->output();}
+           });
