@@ -4,33 +4,71 @@ use strict;
 use warnings;
 
 use DOMTemplate qw( rules tmpl tree);
-use DOMTemplate::Modifier qw( key );
+use DOMTemplate::Modifier qw( val );
 use HTML::Template;
+use HTML::TreeBuilder::LibXML;
 use Benchmark;
 
 our $DEBUG = 1;
 
-no strict 'subs';
 our $t = tree('benchmark.html');
+our $xt = HTML::TreeBuilder::LibXML->new_from_file('benchmark.html');
 
 # benchmark
 
 our $dtmpl = tmpl( $t,
-                  'html body div#content p#monkey-name.big em' => key 'rand'
+                  'html body div#content p#monkey-name.big em' => val 'rand'
                   );
+
+our $xtmpl = tmpl( $xt,
+                  'html body div#content p#monkey-name.big em' => val 'rand'
+                  );
+
+our $htmpl = HTML::Template->new( 'filename' => 'benchmark.html' );
+
+print "\n\nDom template\n\n";
+print $dtmpl->({ 'rand' => rand 64});
 
 print $dtmpl->({ 'rand' => rand 64});
 
-our $htmpl = HTML::Template->new( 'filename' => 'benchmark.html' );
+print "\n\nlibXML based Dom template\n\n";
+
+print $xtmpl->({ 'rand' => rand 64});
+
+print $xtmpl->({ 'rand' => rand 64});
+
+print "\n\nHTML::template\n\n";
 
 $htmpl->param( 'rand' => rand 64 );
 
 print $htmpl->output();
 
+$htmpl->param( 'rand' => rand 64 );
+
+print $htmpl->output();
+
+
+open my $out, '>', '/dev/null';
+
 timethese( 100000,
            {
-            'single rule DOMtemplate' =>
-            sub{$dtmpl->({ 'rand' => rand 64});},
-            'single rule in memory HTMLtemplate' =>
-            sub{$htmpl->param( 'rand' => rand 64 ); $htmpl->output();}
+             'HTMLtemplate single rule in memory' =>
+             sub{$htmpl->param( 'rand' => rand 64 ); print $out $htmpl->output();},
+#             'HTMLtemplate single rule from file' =>            
+#             sub{
+#               my $tmp = HTML::Template->new( 'filename' => 'benchmark.html' );
+#               $tmp->param( 'rand' => rand 64 );
+#               $tmp->output();
+#             },
+            'DOMtemplate single rule' =>
+            sub{print $out $dtmpl->({ 'rand' => rand 64});},
+            'DOMtemplate tree overhead' =>
+            sub{print $out rand 64; print $out $t->as_HTML( '<>&', '', {} );},
+            'LibXML single rule' =>
+            sub{print $out $xtmpl->({ 'rand' => rand 64});},            
+            'LibXML tree overhead' =>
+            sub{print $out rand 64; print $out $xt->as_HTML( '<>&', '', {} );},
+            
+#             'DOMtemplate short selector' =>
+#             sub{print $out $dtmpl2->({ 'rand' => rand 64});},            
            });

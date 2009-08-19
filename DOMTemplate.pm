@@ -7,6 +7,7 @@ use warnings;
 
 use Carp qw( croak );
 use DOMTemplate::Selector qw( css );
+use DOMTemplate::Modifier qw( replace_content );
 use HTML::TreeBuilder;
 use Exporter 'import';
 
@@ -26,7 +27,7 @@ sub rules {
     $odd = ! $odd;
     $odd ? ( push @{$pairs}, ref($x) eq 'CODE' ? $x : [ css($x) ] ) :
       push @{$pairs->[-1]}, ref($x) eq 'CODE' ? $x :
-        sub { $_[0]->delete_content->push_content($x) };
+        sub { replace_content( $_[0], $x) };
   };
   
   croak "Odd number of args, should take list of selector => modifier pairs"
@@ -60,7 +61,7 @@ sub tmpl {
     my $t = $tree->clone();
     #XXX pretty-printing / escaping options, should as_HTML go here? 
     my $result = eval{ $rules->( $t, @_ )->as_HTML( '<>&', '', {} ) };
-    $t->destroy();
+    $t->delete();
     return $result;
   }
 }

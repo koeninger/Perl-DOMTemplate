@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::Simple tests => 3;
+use Test::Simple tests => 4;
 
 use DOMTemplate::Selector qw( css );
 use Benchmark;
@@ -22,9 +22,12 @@ sub eqls {
   return $sel eq $str;
 }
 
+my @divs = css('div')->($t);
+ok ( scalar(@divs) == 2 );
 ok ( eqls 'html body div#content p#monkey-name.big em', '<em>booze</em>' );
 ok ( eqls 'div#footer', '<div id="footer"></div>' );
 ok ( eqls 'p#monke3y-name.big em', '' );
+
 
 # # benchmark
 
@@ -35,7 +38,9 @@ ok ( eqls 'p#monke3y-name.big em', '' );
 #             'css_2' =>
 #             sub{css_2('html body div#content p#monkey-name.big em')->($t);},
 #            });
-# 1;
+
+
+1;
 
 __END__
 <html>

@@ -8,6 +8,7 @@ use warnings;
 use HTML::TreeBuilder;
 use Exporter 'import';
 use List::Util qw( reduce );
+use Memoize;
 
 use vars qw( @EXPORT_OK );
 
@@ -31,7 +32,9 @@ sub css ($) {
                  $id ? ( 'id' => $id ) : (),
                 ];
   }
-
+  
+  # XXX only returns one matching elment, not all
+  # should also be done at 'compile' time
   return sub {
     reduce { $a && $a->look_down( @{$b} ) } ( $_[0], @elts );
   }

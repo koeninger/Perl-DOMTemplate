@@ -5,7 +5,7 @@ use warnings;
 use Test::Simple tests => 5;
 
 use DOMTemplate qw( rules tmpl tree);
-use DOMTemplate::Modifier qw( key );
+use DOMTemplate::Modifier qw( val );
 
 our $DEBUG = 1;
 
@@ -42,10 +42,8 @@ ok ( eqls '<html><head></head><body>quux</body></html>',
 );
 
 ok ( eqls '<html><head></head><body>bar</body></html>',
-  'html body' => key 'foo'
+  'html body' => val 'foo'
 );
-
-
 
 1;
 
