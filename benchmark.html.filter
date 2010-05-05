@@ -1,0 +1,24 @@
+<!DOCTYPE html
+PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="en" lang="en">
+  <head>
+  </head>
+  <body>
+    <h1>helloo monkey</h1>
+    <div id="content">
+      <p id="monkey-name" class="big">your monkey's name is <b>joe</b> and he likes <em>booze <t:var rand /></em> a lot.</p>
+      <h2>your monkey's cousins are:</h2>
+      <table>
+        <tr>
+          <th>cousin</th><th>likes</th>
+        </tr>
+        <tr class="cousin [t:var class/]">
+          <td class="name">jill</td><td class="likes">jam</td>
+        </tr>
+      </table>
+    </div>
+    <div id="footer"></div>
+  </body>
+</html>
